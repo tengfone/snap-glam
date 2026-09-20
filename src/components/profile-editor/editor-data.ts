@@ -3,6 +3,7 @@ export type OverlayPreset = {
   label: string;
   text: string;
   background: string;
+  gradientEnd?: string;
   foreground: string;
 };
 
@@ -17,11 +18,11 @@ export type ExportPreset = {
 };
 
 export const overlayPresets: OverlayPreset[] = [
-  { id: "open", label: "Open to work", text: "#OPEN TO WORK", background: "#167a54", foreground: "#ffffff" },
-  { id: "hiring", label: "We’re hiring", text: "#WE'RE HIRING", background: "#e4543f", foreground: "#ffffff" },
-  { id: "connect", label: "Let’s connect", text: "LET'S CONNECT", background: "#f1c84b", foreground: "#171915" },
-  { id: "coffee", label: "Coffee first", text: "COFFEE FIRST", background: "#272923", foreground: "#ffffff" },
-  { id: "offline", label: "Probably offline", text: "PROBABLY OFFLINE", background: "#6585e6", foreground: "#ffffff" },
+  { id: "open", label: "Open to work", text: "#OpenToWork", background: "#006635", gradientEnd: "#057642", foreground: "#ffffff" },
+  { id: "hiring", label: "We’re hiring", text: "#WE'RE HIRING", background: "#ba342c", gradientEnd: "#ed6952", foreground: "#ffffff" },
+  { id: "connect", label: "Let’s connect", text: "LET'S CONNECT", background: "#e3b62c", gradientEnd: "#f6d96b", foreground: "#171915" },
+  { id: "coffee", label: "Coffee first", text: "COFFEE FIRST", background: "#20231f", gradientEnd: "#4b4f47", foreground: "#ffffff" },
+  { id: "offline", label: "Probably offline", text: "PROBABLY OFFLINE", background: "#4f6fc9", gradientEnd: "#829bec", foreground: "#ffffff" },
   { id: "custom", label: "Make your own", text: "YOUR MESSAGE", background: "#167a54", foreground: "#ffffff" },
 ];
 
