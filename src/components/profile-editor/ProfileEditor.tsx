@@ -38,18 +38,38 @@ function drawArcText(
   const fittedTracking = tracking * fit;
   const fittedWidths = Array.from(phrase, (character) => ctx.measureText(character).width + fittedTracking);
   const totalWidth = fittedWidths.reduce((total, width) => total + width, 0);
-  const textCenterAngle = Math.PI / 2;
-  let offset = -totalWidth / 2;
+  const textHeight = Math.ceil(fontSize * fit * 1.6);
+  const textCanvas = document.createElement("canvas");
+  textCanvas.width = Math.max(1, Math.ceil(totalWidth));
+  textCanvas.height = textHeight;
+  const textContext = textCanvas.getContext("2d");
+  if (!textContext) {
+    ctx.restore();
+    return;
+  }
+  textContext.fillStyle = color;
+  textContext.font = ctx.font;
+  textContext.textAlign = "center";
+  textContext.textBaseline = "middle";
+  let lineOffset = -totalWidth / 2;
   for (let i = 0; i < phrase.length; i += 1) {
     const characterWidth = fittedWidths[i] ?? 0;
-    const distance = offset + characterWidth / 2;
+    textContext.fillText(phrase[i] ?? "", textCanvas.width / 2 + lineOffset + characterWidth / 2, textHeight / 2);
+    lineOffset += characterWidth;
+  }
+
+  // Keep the label weighted toward the left, like the reference frame. Bending
+  // narrow slices of one text line produces a continuous text-path curve,
+  // rather than rotating each letter as a separate slanted block.
+  const textCenterAngle = Math.PI * 0.64;
+  for (let x = 0; x < textCanvas.width; x += 1) {
+    const distance = x - textCanvas.width / 2;
     const angle = textCenterAngle - distance / radius;
     ctx.save();
     ctx.translate(center + Math.cos(angle) * radius, center + Math.sin(angle) * radius);
     ctx.rotate(angle - Math.PI / 2);
-    ctx.fillText(phrase[i] ?? "", 0, 0);
+    ctx.drawImage(textCanvas, x, 0, 1, textHeight, -0.5, -textHeight / 2, 1.25, textHeight);
     ctx.restore();
-    offset += characterWidth;
   }
 
   ctx.restore();
