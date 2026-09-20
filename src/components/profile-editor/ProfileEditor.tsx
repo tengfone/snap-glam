@@ -153,8 +153,8 @@ export function ProfileEditor() {
   const [transform, setTransform] = useState(initialTransform);
   const [overlayId, setOverlayId] = useState("open");
   const [message, setMessage] = useState("#OpenToWork");
-  const [background, setBackground] = useState("#006635");
-  const [gradientEnd, setGradientEnd] = useState<string | undefined>("#057642");
+  const [background, setBackground] = useState("#218b16");
+  const [gradientEnd, setGradientEnd] = useState<string | undefined>("#006b3b");
   const [foreground, setForeground] = useState("#ffffff");
   const [fontScale, setFontScale] = useState(1);
   const [exportId, setExportId] = useState("linkedin");
