@@ -353,7 +353,7 @@ export function ProfileEditor() {
                 <div className="max-w-md text-center">
                   <div className="mx-auto mb-5 grid size-16 place-items-center rounded-full border border-primary/30 bg-primary/10 text-primary"><ImagePlus size={27} aria-hidden="true" /></div>
                   <h2 className="font-display text-xl font-bold">Choose a profile photo</h2>
-                  <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">JPG, PNG, or WebP up to 25 MB. The file stays in this browser tab.</p>
+                  <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">JPG, PNG, or WebP up to 25 MB — click below or drag &amp; drop it here. The file stays in this browser tab.</p>
                   <Button className="mt-6 h-11 px-5" onClick={() => inputRef.current?.click()}><ImagePlus size={17} />Choose photo</Button>
                   {error && <p role="alert" className="mt-4 text-sm font-medium text-destructive">{error}</p>}
                 </div>
