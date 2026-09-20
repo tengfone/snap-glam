@@ -387,7 +387,14 @@ export function ProfileEditor() {
                 <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Message<input maxLength={28} value={message} onChange={(event) => { setMessage(event.target.value || " "); setOverlayId("custom"); }} className="mt-2 h-10 w-full rounded-md border border-input bg-card px-3 text-sm font-semibold uppercase text-foreground outline-none focus:ring-2 focus:ring-ring" /></label>
                 <ColorInput label="Ring" value={background} onChange={(value) => { setBackground(value); setGradientEnd(shiftHex(value, 34)); setOverlayId("custom"); }} />
                 <ColorInput label="Text" value={foreground} onChange={(value) => { setForeground(value); setOverlayId("custom"); }} />
-                <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Text size <span className="float-right font-mono text-foreground">{Math.round(fontScale * 100)}%</span><input aria-label="Frame text size" type="range" min="0.7" max="1.3" step="0.05" value={fontScale} onChange={(event) => setFontScale(Number(event.target.value))} className="mt-2 w-full accent-primary" /></label>
+                <SliderRow label="Text size" valueLabel={`${Math.round(fontScale * 100)}%`} min={0.7} max={1.3} step={0.05} value={fontScale} defaultValue={1} onChange={setFontScale} />
+                <div className="sm:col-span-2">
+                  <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Ring position <span className="font-normal normal-case tracking-normal">(optional)</span></p>
+                  <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                    <SliderRow label="Starts at" valueLabel={hourLabel(arcStart)} min={2.5} max={4.5} step={0.25} value={arcStart} defaultValue={DEFAULT_ARC_START} onChange={setArcStart} />
+                    <SliderRow label="Ends at" valueLabel={hourLabel(arcEnd)} min={9.5} max={11.5} step={0.25} value={arcEnd} defaultValue={DEFAULT_ARC_END} onChange={setArcEnd} />
+                  </div>
+                </div>
               </div>
             </ControlSection>
 
