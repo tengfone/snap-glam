@@ -257,6 +257,7 @@ export function ProfileEditor() {
     setExportId(id);
     setWidth(preset.size);
     setHeight(preset.size);
+    if (id === "slack") setFormat("png");
   }
 
   function updateWidth(next: number) {
@@ -431,7 +432,7 @@ export function ProfileEditor() {
                 <NumberInput label="Height" value={height} onChange={updateHeight} />
               </div>
               <div className="mt-4 flex flex-wrap items-end gap-4">
-                <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Format<select value={format} onChange={(event) => setFormat(event.target.value as "png" | "jpeg")} className="mt-2 block h-10 rounded-md border border-input bg-card px-3 text-sm font-semibold text-foreground"><option value="png">PNG</option><option value="jpeg">JPG</option></select></label>
+                <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Format<select value={format} onChange={(event) => setFormat(event.target.value as "png" | "jpeg")} className="mt-2 block h-10 rounded-md border border-input bg-card px-3 text-sm font-semibold text-foreground"><option value="png">PNG · transparent corners</option><option value="jpeg">JPG · solid corners</option></select></label>
                 {format === "jpeg" && <label className="min-w-44 flex-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">Quality <span className="float-right font-mono text-foreground">{quality}%</span><input aria-label="JPG quality" type="range" min="30" max="100" value={quality} onChange={(event) => setQuality(Number(event.target.value))} className="mt-3 w-full accent-primary" /></label>}
               </div>
               <div className={cn("mt-4 flex items-center justify-between border-y border-border py-3 text-sm", isOversize && "text-destructive")}><span className="text-muted-foreground">Estimated file size</span><strong>{image ? bytesLabel(estimatedBytes) : "—"}{isOversize ? " · over limit" : ""}</strong></div>

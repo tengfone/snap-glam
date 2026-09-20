@@ -5,3 +5,4 @@
 - [x] Add platform and custom export settings
 - [x] Add privacy messaging and page metadata
 - [x] Verify desktop/mobile editing and downloads
+- [x] Add Slack 512px PNG export with transparent corners
