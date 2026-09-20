@@ -213,7 +213,10 @@ export function ProfileEditor() {
   function chooseFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
-    if (!file) return;
+    if (file) loadFile(file);
+  }
+
+  function loadFile(file: File) {
     if (!ACCEPTED_TYPES.includes(file.type)) {
       setError("Choose a JPG, PNG, or WebP image.");
       return;
