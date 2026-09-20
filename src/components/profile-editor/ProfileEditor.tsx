@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type PointerEvent as ReactPointerEvent } from "react";
-import { Download, FlipHorizontal2, ImagePlus, Link2, Lock, RotateCw, RotateCcw, ShieldCheck, Sparkles, Trash2, Unlock } from "lucide-react";
+import { Download, FlipHorizontal2, Github, ImagePlus, Link2, Lock, RotateCw, RotateCcw, ShieldCheck, Sparkles, Trash2, Unlock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { exportPresets, overlayPresets } from "./editor-data";
@@ -320,7 +320,19 @@ export function ProfileEditor() {
             <div className="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground"><Sparkles size={17} aria-hidden="true" /></div>
             <span className="font-display text-lg font-bold">Profile Halo</span>
           </div>
-          <div className="flex items-center gap-2 rounded-full bg-secondary px-3 py-2 text-xs font-semibold text-muted-foreground"><ShieldCheck size={15} className="text-primary" aria-hidden="true" />Your photo never leaves this device</div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 rounded-full bg-secondary px-3 py-2 text-xs font-semibold text-muted-foreground"><ShieldCheck size={15} className="text-primary" aria-hidden="true" />Your photo never leaves this device</div>
+            <a
+              href="https://github.com/tengfone/snap-glam"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+              title="View source on GitHub"
+              className="grid size-9 place-items-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+            >
+              <Github size={17} aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </header>
 
