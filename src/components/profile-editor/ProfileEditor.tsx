@@ -88,6 +88,8 @@ function renderAvatar(
   gradientEnd: string | undefined,
   foreground: string,
   fontScale: number,
+  arcStartHour = DEFAULT_ARC_START,
+  arcEndHour = DEFAULT_ARC_END,
 ) {
   canvas.width = width;
   canvas.height = height;
