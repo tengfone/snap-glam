@@ -122,7 +122,7 @@ function renderAvatar(
     ctx.fillStyle = background;
   }
   ctx.fill();
-  drawArcText(ctx, message.toUpperCase(), cx, outerRadius - ringWidth / 2, ringWidth * 0.42 * fontScale, foreground, startAngle, endAngle);
+  drawArcText(ctx, message.toUpperCase(), cx, outerRadius - ringWidth / 2, ringWidth * 0.56 * fontScale, foreground, startAngle, endAngle);
   ctx.restore();
 }
 
