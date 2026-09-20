@@ -200,11 +200,11 @@ export function ProfileEditor() {
     if (!image) return;
     const timer = window.setTimeout(() => {
       const canvas = document.createElement("canvas");
-      renderAvatar(canvas, image.element, transform, width, height, message, background, gradientEnd, foreground, fontScale);
+      renderAvatar(canvas, image.element, transform, width, height, message, background, gradientEnd, foreground, fontScale, arcStart, arcEnd);
       canvas.toBlob((blob) => setEstimatedBytes(blob?.size ?? null), `image/${format}`, format === "jpeg" ? quality / 100 : undefined);
     }, 160);
     return () => window.clearTimeout(timer);
-  }, [image, transform, width, height, message, background, gradientEnd, foreground, fontScale, format, quality]);
+  }, [image, transform, width, height, message, background, gradientEnd, foreground, fontScale, arcStart, arcEnd, format, quality]);
 
   useEffect(() => () => {
     if (image) URL.revokeObjectURL(image.url);
