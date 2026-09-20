@@ -18,7 +18,7 @@ export type ExportPreset = {
 };
 
 export const overlayPresets: OverlayPreset[] = [
-  { id: "open", label: "Open to work", text: "#OPENTOWORK", background: "#0b6849", gradientEnd: "#24a56f", foreground: "#ffffff" },
+  { id: "open", label: "Open to work", text: "#OpenToWork", background: "#006635", gradientEnd: "#057642", foreground: "#ffffff" },
   { id: "hiring", label: "We’re hiring", text: "#WE'RE HIRING", background: "#ba342c", gradientEnd: "#ed6952", foreground: "#ffffff" },
   { id: "connect", label: "Let’s connect", text: "LET'S CONNECT", background: "#e3b62c", gradientEnd: "#f6d96b", foreground: "#171915" },
   { id: "coffee", label: "Coffee first", text: "COFFEE FIRST", background: "#20231f", gradientEnd: "#4b4f47", foreground: "#ffffff" },

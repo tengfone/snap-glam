@@ -110,7 +110,7 @@ function renderAvatar(
     ctx.fillStyle = background;
   }
   ctx.fill();
-  drawArcText(ctx, message.toUpperCase(), cx, outerRadius - ringWidth / 2, ringWidth * 0.255 * fontScale, foreground, startAngle, endAngle);
+  drawArcText(ctx, message, cx, outerRadius - ringWidth / 2, ringWidth * 0.255 * fontScale, foreground, startAngle, endAngle);
   ctx.restore();
 }
 
@@ -127,9 +127,9 @@ export function ProfileEditor() {
   const [error, setError] = useState("");
   const [transform, setTransform] = useState(initialTransform);
   const [overlayId, setOverlayId] = useState("open");
-  const [message, setMessage] = useState("#OPENTOWORK");
-  const [background, setBackground] = useState("#0b6849");
-  const [gradientEnd, setGradientEnd] = useState<string | undefined>("#24a56f");
+  const [message, setMessage] = useState("#OpenToWork");
+  const [background, setBackground] = useState("#006635");
+  const [gradientEnd, setGradientEnd] = useState<string | undefined>("#057642");
   const [foreground, setForeground] = useState("#ffffff");
   const [fontScale, setFontScale] = useState(1);
   const [exportId, setExportId] = useState("linkedin");
