@@ -358,7 +358,7 @@ export function ProfileEditor() {
                   {error && <p role="alert" className="mt-4 text-sm font-medium text-destructive">{error}</p>}
                 </div>
               ) : (
-                <div className="w-full max-w-[500px]">
+                <div className="w-full max-w-[min(500px,calc(100vh-360px))]">
                   <canvas
                     ref={canvasRef}
                     aria-label="Profile picture preview. Drag to reposition your photo."
