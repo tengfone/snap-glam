@@ -287,7 +287,7 @@ export function ProfileEditor() {
   function download() {
     if (!image) return;
     const canvas = document.createElement("canvas");
-    renderAvatar(canvas, image.element, transform, width, height, message, background, gradientEnd, foreground, fontScale);
+    renderAvatar(canvas, image.element, transform, width, height, message, background, gradientEnd, foreground, fontScale, arcStart, arcEnd);
     canvas.toBlob((blob) => {
       if (!blob) return;
       const url = URL.createObjectURL(blob);
