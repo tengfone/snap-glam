@@ -326,7 +326,22 @@ export function ProfileEditor() {
       <div className="mx-auto max-w-[1240px] px-4 py-5 sm:px-6 sm:py-7">
         <div className="grid overflow-hidden rounded-xl border border-border bg-card shadow-workspace lg:grid-cols-[minmax(0,1fr)_480px]">
           <section className="border-b border-border bg-workspace lg:sticky lg:top-5 lg:border-b-0 lg:border-r">
-            <div className="relative flex min-h-[460px] items-center justify-center p-6 pt-24 sm:min-h-[650px] sm:p-10 sm:pt-28 lg:min-h-[calc(100vh-112px)]">
+            <div
+              className="relative flex min-h-[460px] items-center justify-center p-6 pt-24 sm:min-h-[650px] sm:p-10 sm:pt-28 lg:min-h-[calc(100vh-112px)]"
+              onDragOver={(event) => { event.preventDefault(); setIsDraggingFile(true); }}
+              onDragLeave={() => setIsDraggingFile(false)}
+              onDrop={(event) => {
+                event.preventDefault();
+                setIsDraggingFile(false);
+                const file = event.dataTransfer.files?.[0];
+                if (file) loadFile(file);
+              }}
+            >
+              {isDraggingFile && (
+                <div className="pointer-events-none absolute inset-3 z-10 grid place-items-center rounded-xl border-2 border-dashed border-primary bg-primary/10">
+                  <p className="rounded-full bg-card px-4 py-2 text-sm font-bold text-primary shadow-workspace">Drop your photo here</p>
+                </div>
+              )}
               <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-4 px-6 py-6 sm:px-10">
                 <div>
                   <h1 className="font-display text-xl font-bold sm:text-2xl">Editor preview</h1>
