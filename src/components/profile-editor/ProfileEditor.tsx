@@ -33,7 +33,7 @@ function drawArcText(
   const measuredWidth = widths.reduce((total, width) => total + width, 0);
   // Keep the phrase deliberately angled across the lower-left arc: its first
   // character sits near 9 o'clock and the final character reaches toward 5.
-  const textStartAngle = Math.min(endAngle - 0.24, Math.PI * 0.94);
+  const textStartAngle = Math.min(endAngle - 0.24, Math.PI);
   const textEndAngle = Math.max(startAngle + 0.34, Math.PI * 0.18);
   const availableWidth = radius * (textStartAngle - textEndAngle);
   const fit = Math.min(1, availableWidth / measuredWidth);
