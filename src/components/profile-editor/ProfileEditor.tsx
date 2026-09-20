@@ -168,6 +168,7 @@ export function ProfileEditor() {
   const dragRef = useRef<{ x: number; y: number; startX: number; startY: number } | null>(null);
   const [image, setImage] = useState<ImageState | null>(null);
   const [error, setError] = useState("");
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [transform, setTransform] = useState(initialTransform);
   const [overlayId, setOverlayId] = useState("open");
   const [message, setMessage] = useState("#OpenToWork");
