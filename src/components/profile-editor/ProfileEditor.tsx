@@ -27,10 +27,10 @@ function drawArcText(
   ctx.font = `800 ${fontSize}px Sora, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  const tracking = fontSize * 0.025;
+  const tracking = fontSize * 0.04;
   const widths = Array.from(phrase, (character) => ctx.measureText(character).width + tracking);
   const measuredWidth = widths.reduce((total, width) => total + width, 0);
-  const availableWidth = radius * (endAngle - startAngle - 0.42);
+  const availableWidth = radius * (endAngle - startAngle - 0.5);
   const fit = Math.min(1, availableWidth / measuredWidth);
   if (fit < 1) {
     ctx.font = `800 ${fontSize * fit}px Sora, sans-serif`;
@@ -38,7 +38,7 @@ function drawArcText(
   const fittedTracking = tracking * fit;
   const fittedWidths = Array.from(phrase, (character) => ctx.measureText(character).width + fittedTracking);
   const totalWidth = fittedWidths.reduce((total, width) => total + width, 0);
-  const textCenterAngle = Math.PI * 0.64;
+  const textCenterAngle = Math.PI / 2;
   let offset = -totalWidth / 2;
   for (let i = 0; i < phrase.length; i += 1) {
     const characterWidth = fittedWidths[i] ?? 0;
@@ -51,6 +51,7 @@ function drawArcText(
     ctx.restore();
     offset += characterWidth;
   }
+
   ctx.restore();
 }
 
