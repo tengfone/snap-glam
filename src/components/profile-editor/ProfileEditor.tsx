@@ -437,6 +437,25 @@ function ControlSection({ number, title, children }: { number: string; title: st
   return <div className="border-t border-border pt-6"><div className="mb-4 flex items-center gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{number}</span><h3 className="font-display text-base font-bold">{title}</h3></div>{children}</div>;
 }
 
+function SliderRow({ label, valueLabel, min, max, step, value, defaultValue, onChange, className }: { label: string; valueLabel: string; min: number; max: number; step: number; value: number; defaultValue: number; onChange: (value: number) => void; className?: string }) {
+  const markerPercent = ((defaultValue - min) / (max - min)) * 100;
+  const isDefault = Math.abs(value - defaultValue) < step / 2;
+  return (
+    <div className={className}>
+      <label className="block text-xs font-bold uppercase tracking-wide text-muted-foreground">
+        {label} <span className="float-right font-mono text-foreground">{valueLabel}</span>
+        <input aria-label={label} type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} className="mt-2 w-full accent-primary" />
+      </label>
+      <div className="relative mt-1 h-4">
+        <span className="absolute -translate-x-1/2 text-[10px] font-semibold uppercase tracking-wide" style={{ left: `${markerPercent}%` }}>
+          <span className={cn("block text-center", isDefault ? "text-primary" : "text-muted-foreground")}>Default</span>
+        </span>
+      </div>
+      <button type="button" onClick={() => onChange(defaultValue)} disabled={isDefault} className="mt-1 text-[11px] font-semibold text-primary hover:underline disabled:opacity-0">Reset</button>
+    </div>
+  );
+}
+
 function ColorInput({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
   return <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{label}<span className="mt-2 flex h-10 items-center gap-2 rounded-md border border-input bg-card px-2"><input aria-label={`${label} color`} type="color" value={value} onChange={(event) => onChange(event.target.value)} className="size-6 cursor-pointer border-0 bg-transparent p-0" /><span className="font-mono text-xs text-foreground">{value.toUpperCase()}</span></span></label>;
 }
