@@ -22,54 +22,34 @@ function drawArcText(
   endAngle: number,
 ) {
   const phrase = text.trim();
+  if (!phrase) return;
   ctx.save();
   ctx.fillStyle = color;
   ctx.font = `800 ${fontSize}px Sora, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  const tracking = fontSize * 0.04;
+  const tracking = fontSize * 0.025;
   const widths = Array.from(phrase, (character) => ctx.measureText(character).width + tracking);
   const measuredWidth = widths.reduce((total, width) => total + width, 0);
-  const availableWidth = radius * (endAngle - startAngle - 0.5);
+  const textStartAngle = Math.min(endAngle - 0.24, Math.PI * 0.98);
+  const textEndAngle = Math.max(startAngle + 0.34, Math.PI * 0.28);
+  const availableWidth = radius * (textStartAngle - textEndAngle);
   const fit = Math.min(1, availableWidth / measuredWidth);
   if (fit < 1) {
     ctx.font = `800 ${fontSize * fit}px Sora, sans-serif`;
   }
   const fittedTracking = tracking * fit;
   const fittedWidths = Array.from(phrase, (character) => ctx.measureText(character).width + fittedTracking);
-  const totalWidth = fittedWidths.reduce((total, width) => total + width, 0);
-  const textHeight = Math.ceil(fontSize * fit * 1.6);
-  const textCanvas = document.createElement("canvas");
-  textCanvas.width = Math.max(1, Math.ceil(totalWidth));
-  textCanvas.height = textHeight;
-  const textContext = textCanvas.getContext("2d");
-  if (!textContext) {
-    ctx.restore();
-    return;
-  }
-  textContext.fillStyle = color;
-  textContext.font = ctx.font;
-  textContext.textAlign = "center";
-  textContext.textBaseline = "middle";
-  let lineOffset = -totalWidth / 2;
+  let distance = 0;
   for (let i = 0; i < phrase.length; i += 1) {
     const characterWidth = fittedWidths[i] ?? 0;
-    textContext.fillText(phrase[i] ?? "", textCanvas.width / 2 + lineOffset + characterWidth / 2, textHeight / 2);
-    lineOffset += characterWidth;
-  }
-
-  // Keep the label weighted toward the left, like the reference frame. Bending
-  // narrow slices of one text line produces a continuous text-path curve,
-  // rather than rotating each letter as a separate slanted block.
-  const textCenterAngle = Math.PI * 0.64;
-  for (let x = 0; x < textCanvas.width; x += 1) {
-    const distance = x - textCanvas.width / 2;
-    const angle = textCenterAngle - distance / radius;
+    const angle = textStartAngle - (distance + characterWidth / 2) / radius;
     ctx.save();
     ctx.translate(center + Math.cos(angle) * radius, center + Math.sin(angle) * radius);
     ctx.rotate(angle - Math.PI / 2);
-    ctx.drawImage(textCanvas, x, 0, 1, textHeight, -0.5, -textHeight / 2, 1.25, textHeight);
+    ctx.fillText(phrase[i] ?? "", 0, 0);
     ctx.restore();
+    distance += characterWidth;
   }
 
   ctx.restore();
@@ -81,6 +61,18 @@ function withAlpha(hex: string, alpha: number) {
   const value = Number.parseInt(expanded, 16);
   if (!Number.isFinite(value)) return `rgba(0, 0, 0, ${alpha})`;
   return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
+}
+
+function shiftHex(hex: string, amount: number) {
+  const clean = hex.replace("#", "");
+  const expanded = clean.length === 3 ? clean.split("").map((character) => character + character).join("") : clean;
+  const value = Number.parseInt(expanded, 16);
+  if (!Number.isFinite(value)) return hex;
+  const channel = (shift: number) => Math.max(0, Math.min(255, shift));
+  const red = channel(((value >> 16) & 255) + amount);
+  const green = channel(((value >> 8) & 255) + amount);
+  const blue = channel((value & 255) + amount);
+  return `#${[red, green, blue].map((part) => part.toString(16).padStart(2, "0")).join("")}`;
 }
 
 function renderAvatar(
@@ -161,8 +153,8 @@ export function ProfileEditor() {
   const [transform, setTransform] = useState(initialTransform);
   const [overlayId, setOverlayId] = useState("open");
   const [message, setMessage] = useState("#OpenToWork");
-  const [background, setBackground] = useState("#006635");
-  const [gradientEnd, setGradientEnd] = useState<string | undefined>("#057642");
+  const [background, setBackground] = useState("#218b16");
+  const [gradientEnd, setGradientEnd] = useState<string | undefined>("#006b3b");
   const [foreground, setForeground] = useState("#ffffff");
   const [fontScale, setFontScale] = useState(1);
   const [exportId, setExportId] = useState("linkedin");
@@ -372,8 +364,8 @@ export function ProfileEditor() {
                 ))}
               </div>
               <div className="mt-5 grid gap-4 rounded-lg bg-secondary p-4 sm:grid-cols-2">
-                <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Message<input maxLength={28} value={message} onChange={(event) => { setMessage(event.target.value || " "); setGradientEnd(undefined); setOverlayId("custom"); }} className="mt-2 h-10 w-full rounded-md border border-input bg-card px-3 text-sm font-semibold uppercase text-foreground outline-none focus:ring-2 focus:ring-ring" /></label>
-                <ColorInput label="Ring" value={background} onChange={(value) => { setBackground(value); setGradientEnd(undefined); setOverlayId("custom"); }} />
+                <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Message<input maxLength={28} value={message} onChange={(event) => { setMessage(event.target.value || " "); setOverlayId("custom"); }} className="mt-2 h-10 w-full rounded-md border border-input bg-card px-3 text-sm font-semibold uppercase text-foreground outline-none focus:ring-2 focus:ring-ring" /></label>
+                <ColorInput label="Ring" value={background} onChange={(value) => { setBackground(value); setGradientEnd(shiftHex(value, 34)); setOverlayId("custom"); }} />
                 <ColorInput label="Text" value={foreground} onChange={(value) => { setForeground(value); setOverlayId("custom"); }} />
                 <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Text size <span className="float-right font-mono text-foreground">{Math.round(fontScale * 100)}%</span><input aria-label="Frame text size" type="range" min="0.7" max="1.3" step="0.05" value={fontScale} onChange={(event) => setFontScale(Number(event.target.value))} className="mt-2 w-full accent-primary" /></label>
               </div>
