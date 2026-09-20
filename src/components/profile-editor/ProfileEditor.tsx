@@ -43,10 +43,10 @@ function drawArcText(
   for (let i = 0; i < phrase.length; i += 1) {
     const characterWidth = fittedWidths[i] ?? 0;
     const distance = offset + characterWidth / 2;
-    const angle = textCenterAngle + distance / radius;
+    const angle = textCenterAngle - distance / radius;
     ctx.save();
     ctx.translate(center + Math.cos(angle) * radius, center + Math.sin(angle) * radius);
-    ctx.rotate(angle + Math.PI / 2);
+    ctx.rotate(angle - Math.PI / 2);
     ctx.fillText(phrase[i] ?? "", 0, 0);
     ctx.restore();
     offset += characterWidth;
