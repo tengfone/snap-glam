@@ -11,30 +11,45 @@ type ImageState = { element: HTMLImageElement; name: string; url: string };
 type Transform = { x: number; y: number; zoom: number; rotation: number; flip: boolean };
 const initialTransform: Transform = { x: 0, y: 0, zoom: 1, rotation: 0, flip: false };
 
-function drawCircularText(
+function drawArcText(
   ctx: CanvasRenderingContext2D,
   text: string,
   center: number,
   radius: number,
   fontSize: number,
   color: string,
+  startAngle: number,
+  endAngle: number,
 ) {
-  const phrase = `${text}  •  `;
-  const repeated = phrase.repeat(Math.max(3, Math.ceil(30 / phrase.length)));
+  const repeatCount = text.length <= 12 ? 3 : 2;
+  const repeated = Array.from({ length: repeatCount }, () => text).join("   •   ");
   ctx.save();
   ctx.fillStyle = color;
   ctx.font = `800 ${fontSize}px Sora, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  const circumference = Math.PI * 2 * radius;
-  const spacing = circumference / repeated.length;
+  const tracking = fontSize * 0.045;
+  const widths = Array.from(repeated, (character) => ctx.measureText(character).width + tracking);
+  const measuredWidth = widths.reduce((total, width) => total + width, 0);
+  const availableWidth = radius * (endAngle - startAngle - 0.12);
+  const fit = Math.min(1, availableWidth / measuredWidth);
+  if (fit < 1) {
+    ctx.font = `800 ${fontSize * fit}px Sora, sans-serif`;
+  }
+  const fittedTracking = tracking * fit;
+  const fittedWidths = Array.from(repeated, (character) => ctx.measureText(character).width + fittedTracking);
+  const totalWidth = fittedWidths.reduce((total, width) => total + width, 0);
+  let offset = -totalWidth / 2;
   for (let i = 0; i < repeated.length; i += 1) {
-    const angle = -Math.PI / 2 + (i * spacing) / radius;
+    const characterWidth = fittedWidths[i] ?? 0;
+    const distance = offset + characterWidth / 2;
+    const angle = Math.PI / 2 - distance / radius;
     ctx.save();
     ctx.translate(center + Math.cos(angle) * radius, center + Math.sin(angle) * radius);
-    ctx.rotate(angle + Math.PI / 2);
+    ctx.rotate(angle - Math.PI / 2);
     ctx.fillText(repeated[i] ?? "", 0, 0);
     ctx.restore();
+    offset += characterWidth;
   }
   ctx.restore();
 }
@@ -47,6 +62,7 @@ function renderAvatar(
   height: number,
   message: string,
   background: string,
+  gradientEnd: string | undefined,
   foreground: string,
   fontScale: number,
 ) {
@@ -57,15 +73,17 @@ function renderAvatar(
   const size = Math.min(width, height);
   const cx = width / 2;
   const cy = height / 2;
-  const ringWidth = size * 0.145;
-  const photoRadius = size / 2 - ringWidth;
+  const ringWidth = size * 0.15;
+  const photoRadius = size / 2;
+  const outerRadius = size / 2;
+  const innerRadius = outerRadius - ringWidth;
+  const startAngle = Math.PI * 0.17;
+  const endAngle = Math.PI * 0.83;
   ctx.clearRect(0, 0, width, height);
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, size / 2, 0, Math.PI * 2);
   ctx.clip();
-  ctx.fillStyle = background;
-  ctx.fillRect(cx - size / 2, cy - size / 2, size, size);
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx, cy, photoRadius + 1, 0, Math.PI * 2);
@@ -78,7 +96,21 @@ function renderAvatar(
   ctx.scale(transform.flip ? -1 : 1, 1);
   ctx.drawImage(image, -drawW / 2, -drawH / 2, drawW, drawH);
   ctx.restore();
-  drawCircularText(ctx, message.toUpperCase(), cx, size / 2 - ringWidth / 2, ringWidth * 0.29 * fontScale, foreground);
+  ctx.beginPath();
+  ctx.arc(cx, cy, outerRadius, startAngle, endAngle);
+  ctx.arc(cx, cy, innerRadius, endAngle, startAngle, true);
+  ctx.closePath();
+  if (gradientEnd) {
+    const gradient = ctx.createLinearGradient(cx - outerRadius, cy, cx + outerRadius, cy);
+    gradient.addColorStop(0, background);
+    gradient.addColorStop(0.5, gradientEnd);
+    gradient.addColorStop(1, background);
+    ctx.fillStyle = gradient;
+  } else {
+    ctx.fillStyle = background;
+  }
+  ctx.fill();
+  drawArcText(ctx, message.toUpperCase(), cx, outerRadius - ringWidth / 2, ringWidth * 0.255 * fontScale, foreground, startAngle, endAngle);
   ctx.restore();
 }
 
@@ -96,7 +128,8 @@ export function ProfileEditor() {
   const [transform, setTransform] = useState(initialTransform);
   const [overlayId, setOverlayId] = useState("open");
   const [message, setMessage] = useState("#OPEN TO WORK");
-  const [background, setBackground] = useState("#167a54");
+  const [background, setBackground] = useState("#0b6849");
+  const [gradientEnd, setGradientEnd] = useState<string | undefined>("#24a56f");
   const [foreground, setForeground] = useState("#ffffff");
   const [fontScale, setFontScale] = useState(1);
   const [exportId, setExportId] = useState("linkedin");
@@ -113,8 +146,8 @@ export function ProfileEditor() {
 
   const paintPreview = useCallback(() => {
     if (!canvasRef.current || !image) return;
-    renderAvatar(canvasRef.current, image.element, transform, PREVIEW_SIZE, PREVIEW_SIZE, message, background, foreground, fontScale);
-  }, [image, transform, message, background, foreground, fontScale]);
+    renderAvatar(canvasRef.current, image.element, transform, PREVIEW_SIZE, PREVIEW_SIZE, message, background, gradientEnd, foreground, fontScale);
+  }, [image, transform, message, background, gradientEnd, foreground, fontScale]);
 
   useEffect(() => paintPreview(), [paintPreview]);
 
@@ -122,11 +155,11 @@ export function ProfileEditor() {
     if (!image) return;
     const timer = window.setTimeout(() => {
       const canvas = document.createElement("canvas");
-      renderAvatar(canvas, image.element, transform, width, height, message, background, foreground, fontScale);
+      renderAvatar(canvas, image.element, transform, width, height, message, background, gradientEnd, foreground, fontScale);
       canvas.toBlob((blob) => setEstimatedBytes(blob?.size ?? null), `image/${format}`, format === "jpeg" ? quality / 100 : undefined);
     }, 160);
     return () => window.clearTimeout(timer);
-  }, [image, transform, width, height, message, background, foreground, fontScale, format, quality]);
+  }, [image, transform, width, height, message, background, gradientEnd, foreground, fontScale, format, quality]);
 
   useEffect(() => () => {
     if (image) URL.revokeObjectURL(image.url);
@@ -165,6 +198,7 @@ export function ProfileEditor() {
     setOverlayId(id);
     setMessage(preset.text);
     setBackground(preset.background);
+    setGradientEnd(preset.gradientEnd);
     setForeground(preset.foreground);
   }
 
@@ -208,7 +242,7 @@ export function ProfileEditor() {
   function download() {
     if (!image) return;
     const canvas = document.createElement("canvas");
-    renderAvatar(canvas, image.element, transform, width, height, message, background, foreground, fontScale);
+    renderAvatar(canvas, image.element, transform, width, height, message, background, gradientEnd, foreground, fontScale);
     canvas.toBlob((blob) => {
       if (!blob) return;
       const url = URL.createObjectURL(blob);
@@ -305,8 +339,8 @@ export function ProfileEditor() {
                 ))}
               </div>
               <div className="mt-5 grid gap-4 rounded-lg bg-secondary p-4 sm:grid-cols-2">
-                <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Message<input maxLength={28} value={message} onChange={(event) => { setMessage(event.target.value || " "); setOverlayId("custom"); }} className="mt-2 h-10 w-full rounded-md border border-input bg-card px-3 text-sm font-semibold uppercase text-foreground outline-none focus:ring-2 focus:ring-ring" /></label>
-                <ColorInput label="Ring" value={background} onChange={(value) => { setBackground(value); setOverlayId("custom"); }} />
+                <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Message<input maxLength={28} value={message} onChange={(event) => { setMessage(event.target.value || " "); setGradientEnd(undefined); setOverlayId("custom"); }} className="mt-2 h-10 w-full rounded-md border border-input bg-card px-3 text-sm font-semibold uppercase text-foreground outline-none focus:ring-2 focus:ring-ring" /></label>
+                <ColorInput label="Ring" value={background} onChange={(value) => { setBackground(value); setGradientEnd(undefined); setOverlayId("custom"); }} />
                 <ColorInput label="Text" value={foreground} onChange={(value) => { setForeground(value); setOverlayId("custom"); }} />
                 <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Text size <span className="float-right font-mono text-foreground">{Math.round(fontScale * 100)}%</span><input aria-label="Frame text size" type="range" min="0.7" max="1.3" step="0.05" value={fontScale} onChange={(event) => setFontScale(Number(event.target.value))} className="mt-2 w-full accent-primary" /></label>
               </div>
