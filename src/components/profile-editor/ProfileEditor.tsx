@@ -175,6 +175,8 @@ export function ProfileEditor() {
   const [gradientEnd, setGradientEnd] = useState<string | undefined>("#006b3b");
   const [foreground, setForeground] = useState("#ffffff");
   const [fontScale, setFontScale] = useState(1);
+  const [arcStart, setArcStart] = useState(DEFAULT_ARC_START);
+  const [arcEnd, setArcEnd] = useState(DEFAULT_ARC_END);
   const [exportId, setExportId] = useState("linkedin");
   const [width, setWidth] = useState(400);
   const [height, setHeight] = useState(400);
