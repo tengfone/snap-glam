@@ -38,11 +38,12 @@ function drawArcText(
   const fittedTracking = tracking * fit;
   const fittedWidths = Array.from(phrase, (character) => ctx.measureText(character).width + fittedTracking);
   const totalWidth = fittedWidths.reduce((total, width) => total + width, 0);
+  const textCenterAngle = Math.PI * 0.64;
   let offset = -totalWidth / 2;
   for (let i = 0; i < phrase.length; i += 1) {
     const characterWidth = fittedWidths[i] ?? 0;
     const distance = offset + characterWidth / 2;
-    const angle = Math.PI / 2 - distance / radius;
+    const angle = textCenterAngle - distance / radius;
     ctx.save();
     ctx.translate(center + Math.cos(angle) * radius, center + Math.sin(angle) * radius);
     ctx.rotate(angle - Math.PI / 2);
