@@ -296,10 +296,10 @@ export function ProfileEditor() {
             <ControlSection number="02" title="Pick a frame">
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {overlayPresets.map((preset) => (
-                  <button key={preset.id} type="button" onClick={() => pickOverlay(preset.id)} className={cn("min-h-20 rounded-md border bg-card p-2 text-left transition-colors hover:border-primary", overlayId === preset.id ? "border-primary ring-2 ring-primary/20" : "border-border") }>
+                  <Button key={preset.id} type="button" variant="secondary" onClick={() => pickOverlay(preset.id)} className={cn("h-auto min-h-20 flex-col items-stretch gap-0 p-2 text-left hover:border-primary", overlayId === preset.id ? "border-primary ring-2 ring-primary/20" : "border-border") }>
                     <span className="mb-2 block h-3 rounded-sm" style={{ backgroundColor: preset.background }} />
                     <span className="text-xs font-semibold">{preset.label}</span>
-                  </button>
+                  </Button>
                 ))}
               </div>
               <div className="mt-4 grid gap-4 border-t border-border pt-4 sm:grid-cols-2">

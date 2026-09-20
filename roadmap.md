@@ -1,7 +1,7 @@
 # Roadmap
 
-- [ ] Build browser-only photo upload and editing
-- [ ] Add circular overlay presets and customization
-- [ ] Add platform and custom export settings
-- [ ] Add privacy messaging and page metadata
+- [x] Build browser-only photo upload and editing
+- [x] Add circular overlay presets and customization
+- [x] Add platform and custom export settings
+- [x] Add privacy messaging and page metadata
 - [ ] Verify desktop/mobile editing and downloads
