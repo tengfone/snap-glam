@@ -23,7 +23,7 @@ function drawCircularText(
   const repeated = phrase.repeat(Math.max(3, Math.ceil(30 / phrase.length)));
   ctx.save();
   ctx.fillStyle = color;
-  ctx.font = `800 ${fontSize}px Arial, sans-serif`;
+  ctx.font = `800 ${fontSize}px Sora, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   const circumference = Math.PI * 2 * radius;
@@ -231,39 +231,36 @@ export function ProfileEditor() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-8">
+        <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="grid size-9 place-items-center rounded-md bg-primary text-primary-foreground"><Sparkles size={18} aria-hidden="true" /></div>
-            <span className="font-display text-xl font-bold">Profile Halo</span>
+            <div className="grid size-9 place-items-center rounded-lg bg-primary text-primary-foreground"><Sparkles size={17} aria-hidden="true" /></div>
+            <span className="font-display text-lg font-bold">Profile Halo</span>
           </div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground"><ShieldCheck size={16} className="text-primary" aria-hidden="true" />Your photo never leaves this device</div>
+          <div className="flex items-center gap-2 rounded-full bg-secondary px-3 py-2 text-xs font-semibold text-muted-foreground"><ShieldCheck size={15} className="text-primary" aria-hidden="true" />Your photo never leaves this device</div>
         </div>
       </header>
 
-      <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8 lg:py-10">
-        <div className="mb-8 max-w-3xl">
-          <p className="mb-2 text-xs font-bold uppercase tracking-widest text-primary">Private by design</p>
-          <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl">Make your profile picture say more.</h1>
-          <p className="mt-3 max-w-2xl text-base text-muted-foreground">Add a professional frame or your own inside joke. Edit and export entirely in your browser.</p>
-        </div>
-
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(360px,0.9fr)]">
-          <section className="lg:sticky lg:top-6">
-            <div className="relative flex min-h-[420px] items-center justify-center overflow-hidden rounded-lg border border-border bg-workspace p-5 sm:min-h-[620px] sm:p-10">
-              <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-border bg-card/80 px-4 py-3 backdrop-blur">
-                <span className="text-xs font-semibold text-muted-foreground">LIVE PREVIEW</span>
+      <div className="mx-auto max-w-[1240px] px-4 py-5 sm:px-6 sm:py-7">
+        <div className="grid overflow-hidden rounded-xl border border-border bg-card shadow-workspace lg:grid-cols-[minmax(0,1fr)_480px]">
+          <section className="border-b border-border bg-workspace lg:sticky lg:top-5 lg:border-b-0 lg:border-r">
+            <div className="relative flex min-h-[460px] items-center justify-center p-6 pt-24 sm:min-h-[650px] sm:p-10 sm:pt-28 lg:min-h-[calc(100vh-112px)]">
+              <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-4 px-6 py-6 sm:px-10">
+                <div>
+                  <h1 className="font-display text-xl font-bold sm:text-2xl">Editor preview</h1>
+                  <p className="mt-1 text-sm text-muted-foreground">{image ? "Drag to reposition your photo" : "Your finished profile image appears here"}</p>
+                </div>
                 {image && <span className="max-w-[55%] truncate text-xs text-muted-foreground">{image.name}</span>}
               </div>
               {!image ? (
                 <div className="max-w-md text-center">
-                  <div className="mx-auto mb-5 grid size-16 place-items-center rounded-full border border-dashed border-primary bg-primary/10 text-primary"><ImagePlus size={28} aria-hidden="true" /></div>
-                  <h2 className="font-display text-2xl font-bold">Choose a profile photo</h2>
+                  <div className="mx-auto mb-5 grid size-16 place-items-center rounded-full border border-primary/30 bg-primary/10 text-primary"><ImagePlus size={27} aria-hidden="true" /></div>
+                  <h2 className="font-display text-xl font-bold">Choose a profile photo</h2>
                   <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">JPG, PNG, or WebP up to 25 MB. The file stays in this browser tab.</p>
-                  <Button className="mt-6" onClick={() => inputRef.current?.click()}><ImagePlus size={17} />Choose photo</Button>
+                  <Button className="mt-6 h-11 px-5" onClick={() => inputRef.current?.click()}><ImagePlus size={17} />Choose photo</Button>
                   {error && <p role="alert" className="mt-4 text-sm font-medium text-destructive">{error}</p>}
                 </div>
               ) : (
-                <div className="mt-10 w-full max-w-[560px]">
+                <div className="w-full max-w-[500px]">
                   <canvas
                     ref={canvasRef}
                     aria-label="Profile picture preview. Drag to reposition your photo."
@@ -271,38 +268,43 @@ export function ProfileEditor() {
                     onPointerMove={pointerMove}
                     onPointerUp={() => { dragRef.current = null; }}
                     onPointerCancel={() => { dragRef.current = null; }}
-                    className="aspect-square w-full cursor-grab touch-none rounded-full shadow-preview active:cursor-grabbing"
+                    className="aspect-square w-full cursor-grab touch-none rounded-full border-4 border-card shadow-preview active:cursor-grabbing"
                   />
-                  <p className="mt-4 text-center text-xs font-medium text-muted-foreground">Drag the photo to reposition</p>
+                  <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+                    <Button variant="icon" aria-label="Rotate left" title="Rotate left" onClick={() => setTransform((value) => ({ ...value, rotation: value.rotation - 90 }))}><RotateCcw size={17} /></Button>
+                    <Button variant="icon" aria-label="Rotate right" title="Rotate right" onClick={() => setTransform((value) => ({ ...value, rotation: value.rotation + 90 }))}><RotateCw size={17} /></Button>
+                    <Button variant="icon" aria-label="Flip horizontally" title="Flip horizontally" onClick={() => setTransform((value) => ({ ...value, flip: !value.flip }))}><FlipHorizontal2 size={18} /></Button>
+                    <Button variant="ghost" onClick={() => setTransform(initialTransform)}>Reset</Button>
+                  </div>
                 </div>
               )}
             </div>
             <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={chooseFile} />
           </section>
 
-          <section className="space-y-7" aria-label="Editor controls">
-            <ControlSection number="01" title="Photo">
-              <div className="flex flex-wrap items-center gap-2">
-                <Button variant="secondary" onClick={() => inputRef.current?.click()}><ImagePlus size={16} />{image ? "Replace" : "Choose photo"}</Button>
-                <Button variant="icon" aria-label="Rotate left" title="Rotate left" disabled={!image} onClick={() => setTransform((value) => ({ ...value, rotation: value.rotation - 90 }))}><RotateCcw size={17} /></Button>
-                <Button variant="icon" aria-label="Rotate right" title="Rotate right" disabled={!image} onClick={() => setTransform((value) => ({ ...value, rotation: value.rotation + 90 }))}><RotateCw size={17} /></Button>
-                <Button variant="icon" aria-label="Flip horizontally" title="Flip horizontally" disabled={!image} onClick={() => setTransform((value) => ({ ...value, flip: !value.flip }))}><FlipHorizontal2 size={18} /></Button>
-                <Button variant="ghost" disabled={!image} onClick={() => setTransform(initialTransform)}>Reset</Button>
-              </div>
+          <section className="space-y-8 bg-card p-6 sm:p-8 lg:max-h-[calc(100vh-112px)] lg:overflow-y-auto" aria-label="Editor controls">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-primary">Profile picture studio</p>
+              <h2 className="mt-2 font-display text-2xl font-bold">Create your frame</h2>
+              <p className="mt-1 text-sm text-muted-foreground">Three quick steps, processed entirely on this device.</p>
+            </div>
+
+            <ControlSection number="1" title="Photo">
+              <Button variant="secondary" className="h-12 w-full border-dashed" onClick={() => inputRef.current?.click()}><ImagePlus size={17} />{image ? "Replace current photo" : "Upload your profile photo"}</Button>
               <label className="mt-4 block text-xs font-bold uppercase tracking-wide text-muted-foreground">Zoom <span className="float-right font-mono text-foreground">{Math.round(transform.zoom * 100)}%</span></label>
               <input aria-label="Photo zoom" type="range" min="1" max="3" step="0.01" value={transform.zoom} disabled={!image} onChange={(event) => setTransform((value) => ({ ...value, zoom: Number(event.target.value) }))} className="mt-2 w-full accent-primary" />
             </ControlSection>
 
-            <ControlSection number="02" title="Pick a frame">
+            <ControlSection number="2" title="Frame">
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {overlayPresets.map((preset) => (
-                  <Button key={preset.id} type="button" variant="secondary" onClick={() => pickOverlay(preset.id)} className={cn("h-auto min-h-20 flex-col items-stretch gap-0 p-2 text-left hover:border-primary", overlayId === preset.id ? "border-primary ring-2 ring-primary/20" : "border-border") }>
+                  <Button key={preset.id} type="button" variant="secondary" onClick={() => pickOverlay(preset.id)} className={cn("h-auto min-h-16 flex-col items-stretch gap-0 p-2 text-left hover:border-primary", overlayId === preset.id ? "border-primary bg-primary/5 ring-2 ring-primary/15" : "border-border") }>
                     <span className="mb-2 block h-3 rounded-sm" style={{ backgroundColor: preset.background }} />
                     <span className="text-xs font-semibold">{preset.label}</span>
                   </Button>
                 ))}
               </div>
-              <div className="mt-4 grid gap-4 border-t border-border pt-4 sm:grid-cols-2">
+              <div className="mt-5 grid gap-4 rounded-lg bg-secondary p-4 sm:grid-cols-2">
                 <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Message<input maxLength={28} value={message} onChange={(event) => { setMessage(event.target.value || " "); setOverlayId("custom"); }} className="mt-2 h-10 w-full rounded-md border border-input bg-card px-3 text-sm font-semibold uppercase text-foreground outline-none focus:ring-2 focus:ring-ring" /></label>
                 <ColorInput label="Ring" value={background} onChange={(value) => { setBackground(value); setOverlayId("custom"); }} />
                 <ColorInput label="Text" value={foreground} onChange={(value) => { setForeground(value); setOverlayId("custom"); }} />
@@ -310,11 +312,11 @@ export function ProfileEditor() {
               </div>
             </ControlSection>
 
-            <ControlSection number="03" title="Export">
+            <ControlSection number="3" title="Export">
               <div className="flex flex-wrap gap-2" role="group" aria-label="Export platform">
                 {exportPresets.map((preset) => <Button key={preset.id} variant={exportId === preset.id ? "primary" : "secondary"} className="h-9 px-3" onClick={() => pickExport(preset.id)}>{preset.label}</Button>)}
               </div>
-              <div className="mt-4 rounded-md border border-border bg-muted/45 p-3">
+              <div className="mt-4 rounded-lg border border-border bg-secondary p-3">
                 <p className="text-xs leading-5 text-muted-foreground">{selectedExport?.note}</p>
                 {selectedExport?.source && <a href={selectedExport.source} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">View source <Link2 size={12} /></a>}
               </div>
@@ -328,12 +330,16 @@ export function ProfileEditor() {
                 {format === "jpeg" && <label className="min-w-44 flex-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">Quality <span className="float-right font-mono text-foreground">{quality}%</span><input aria-label="JPG quality" type="range" min="30" max="100" value={quality} onChange={(event) => setQuality(Number(event.target.value))} className="mt-3 w-full accent-primary" /></label>}
               </div>
               <div className={cn("mt-4 flex items-center justify-between border-y border-border py-3 text-sm", isOversize && "text-destructive")}><span className="text-muted-foreground">Estimated file size</span><strong>{image ? bytesLabel(estimatedBytes) : "—"}{isOversize ? " · over limit" : ""}</strong></div>
-              <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto]">
-                <Button disabled={!image} onClick={download}><Download size={17} />Download {width}×{height}</Button>
+              <div className="mt-5 grid gap-2 sm:grid-cols-[1fr_auto]">
+                <Button className="h-11" disabled={!image} onClick={download}><Download size={17} />Download {width}×{height}</Button>
                 <Button variant="ghost" disabled={!image} onClick={startOver}><Trash2 size={16} />Start over</Button>
               </div>
-              <p className="mt-3 text-center text-[11px] leading-5 text-muted-foreground">Requirements last checked September 2026. Exporting happens locally.</p>
             </ControlSection>
+
+            <div className="flex items-start gap-3 rounded-lg border border-primary/15 bg-primary/5 p-4 text-xs leading-5 text-muted-foreground">
+              <ShieldCheck size={18} className="mt-0.5 shrink-0 text-primary" aria-hidden="true" />
+              <p><strong className="text-foreground">Private by design.</strong> Your photo and edits never leave this device. Requirements last checked September 2026.</p>
+            </div>
           </section>
         </div>
       </div>
@@ -342,7 +348,7 @@ export function ProfileEditor() {
 }
 
 function ControlSection({ number, title, children }: { number: string; title: string; children: React.ReactNode }) {
-  return <div className="border-t border-border pt-4"><div className="mb-4 flex items-baseline gap-3"><span className="font-mono text-xs text-primary">{number}</span><h2 className="font-display text-xl font-bold">{title}</h2></div>{children}</div>;
+  return <div className="border-t border-border pt-6"><div className="mb-4 flex items-center gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{number}</span><h3 className="font-display text-base font-bold">{title}</h3></div>{children}</div>;
 }
 
 function ColorInput({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
