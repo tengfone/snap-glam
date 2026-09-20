@@ -84,8 +84,8 @@ function renderAvatar(
   const photoRadius = size / 2;
   const outerRadius = size / 2;
   const innerRadius = outerRadius - ringWidth;
-  const startAngle = Math.PI * 1.22;
-  const endAngle = Math.PI * 2.28;
+  const startAngle = -Math.PI * 0.25;
+  const endAngle = Math.PI * 1.25;
   ctx.clearRect(0, 0, width, height);
   ctx.save();
   ctx.beginPath();
