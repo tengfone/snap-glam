@@ -328,7 +328,7 @@ export function ProfileEditor() {
               rel="noopener noreferrer"
               aria-label="View source on GitHub"
               title="View source on GitHub"
-              className="grid size-9 place-items-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-secondary-hover hover:text-foreground"
+              className="grid size-9 place-items-center rounded-full bg-secondary text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
             >
               <Github size={17} aria-hidden="true" />
             </a>
