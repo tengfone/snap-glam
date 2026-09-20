@@ -127,7 +127,7 @@ export function ProfileEditor() {
   const [error, setError] = useState("");
   const [transform, setTransform] = useState(initialTransform);
   const [overlayId, setOverlayId] = useState("open");
-  const [message, setMessage] = useState("#OPEN TO WORK");
+  const [message, setMessage] = useState("#OPENTOWORK");
   const [background, setBackground] = useState("#0b6849");
   const [gradientEnd, setGradientEnd] = useState<string | undefined>("#24a56f");
   const [foreground, setForeground] = useState("#ffffff");
