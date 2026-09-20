@@ -38,7 +38,10 @@ function drawArcText(
   const fittedTracking = tracking * fit;
   const fittedWidths = Array.from(phrase, (character) => ctx.measureText(character).width + fittedTracking);
   const totalWidth = fittedWidths.reduce((total, width) => total + width, 0);
-  const textCenterAngle = Math.PI / 2;
+  // Keep the label weighted toward the left, like the reference frame.
+  // The glyphs follow the same curved baseline, but limiting their individual
+  // rotation avoids the pinwheel/slanted-letter effect of canvas arc text.
+  const textCenterAngle = Math.PI * 0.64;
   let offset = -totalWidth / 2;
   for (let i = 0; i < phrase.length; i += 1) {
     const characterWidth = fittedWidths[i] ?? 0;
@@ -46,7 +49,8 @@ function drawArcText(
     const angle = textCenterAngle - distance / radius;
     ctx.save();
     ctx.translate(center + Math.cos(angle) * radius, center + Math.sin(angle) * radius);
-    ctx.rotate(angle - Math.PI / 2);
+    const tangentRotation = angle - Math.PI / 2;
+    ctx.rotate(Math.max(-0.28, Math.min(0.28, tangentRotation)));
     ctx.fillText(phrase[i] ?? "", 0, 0);
     ctx.restore();
     offset += characterWidth;
