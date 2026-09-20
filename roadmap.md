@@ -4,4 +4,4 @@
 - [x] Add circular overlay presets and customization
 - [x] Add platform and custom export settings
 - [x] Add privacy messaging and page metadata
-- [ ] Verify desktop/mobile editing and downloads
+- [x] Verify desktop/mobile editing and downloads
