@@ -102,8 +102,8 @@ function renderAvatar(
   const photoRadius = size / 2;
   const outerRadius = size / 2;
   const innerRadius = outerRadius - ringWidth;
-  const startAngle = Math.PI / 6; // 4 o'clock
-  const endAngle = (Math.PI * 7) / 6; // 10 o'clock, swept through the bottom
+  const startAngle = hourToAngle(arcStartHour);
+  const endAngle = hourToAngle(arcEndHour);
   ctx.clearRect(0, 0, width, height);
   ctx.save();
   ctx.beginPath();
