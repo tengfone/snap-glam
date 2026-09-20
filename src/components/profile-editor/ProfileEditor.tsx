@@ -191,8 +191,8 @@ export function ProfileEditor() {
 
   const paintPreview = useCallback(() => {
     if (!canvasRef.current || !image) return;
-    renderAvatar(canvasRef.current, image.element, transform, PREVIEW_SIZE, PREVIEW_SIZE, message, background, gradientEnd, foreground, fontScale);
-  }, [image, transform, message, background, gradientEnd, foreground, fontScale]);
+    renderAvatar(canvasRef.current, image.element, transform, PREVIEW_SIZE, PREVIEW_SIZE, message, background, gradientEnd, foreground, fontScale, arcStart, arcEnd);
+  }, [image, transform, message, background, gradientEnd, foreground, fontScale, arcStart, arcEnd]);
 
   useEffect(() => paintPreview(), [paintPreview]);
 
