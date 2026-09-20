@@ -387,7 +387,7 @@ export function ProfileEditor() {
                 <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Message<input maxLength={28} value={message} onChange={(event) => { setMessage(event.target.value || " "); setOverlayId("custom"); }} className="mt-2 h-10 w-full rounded-md border border-input bg-card px-3 text-sm font-semibold uppercase text-foreground outline-none focus:ring-2 focus:ring-ring" /></label>
                 <ColorInput label="Ring" value={background} onChange={(value) => { setBackground(value); setGradientEnd(shiftHex(value, 34)); setOverlayId("custom"); }} />
                 <ColorInput label="Text" value={foreground} onChange={(value) => { setForeground(value); setOverlayId("custom"); }} />
-                <SliderRow label="Text size" valueLabel={`${Math.round(fontScale * 100)}%`} min={0.7} max={1.3} step={0.05} value={fontScale} defaultValue={1} onChange={setFontScale} />
+                <SliderRow className="sm:col-span-2" label="Text size" valueLabel={`${Math.round(fontScale * 100)}%`} min={0.7} max={1.3} step={0.05} value={fontScale} defaultValue={1} onChange={setFontScale} />
                 <div className="sm:col-span-2">
                   <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Ring position <span className="font-normal normal-case tracking-normal">(optional)</span></p>
                   <div className="mt-3 grid gap-4 sm:grid-cols-2">
