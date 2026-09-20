@@ -77,6 +77,20 @@ function shiftHex(hex: string, amount: number) {
   return `#${[red, green, blue].map((part) => part.toString(16).padStart(2, "0")).join("")}`;
 }
 
+const DEFAULT_ARC_START = 3.5; // 3:30
+const DEFAULT_ARC_END = 10.5; // 10:30
+
+// clock hour -> canvas angle (0 rad = 3 o'clock, clockwise)
+function hourToAngle(hour: number) {
+  return ((hour - 3) * Math.PI) / 6;
+}
+
+function hourLabel(hour: number) {
+  const whole = Math.floor(hour) === 0 ? 12 : Math.floor(hour);
+  const minutes = Math.round((hour - Math.floor(hour)) * 60);
+  return `${whole}:${minutes.toString().padStart(2, "0")}`;
+}
+
 function renderAvatar(
   canvas: HTMLCanvasElement,
   image: HTMLImageElement,
@@ -88,6 +102,8 @@ function renderAvatar(
   gradientEnd: string | undefined,
   foreground: string,
   fontScale: number,
+  arcStartHour = DEFAULT_ARC_START,
+  arcEndHour = DEFAULT_ARC_END,
 ) {
   canvas.width = width;
   canvas.height = height;
@@ -100,8 +116,8 @@ function renderAvatar(
   const photoRadius = size / 2;
   const outerRadius = size / 2;
   const innerRadius = outerRadius - ringWidth;
-  const startAngle = Math.PI / 6; // 4 o'clock
-  const endAngle = (Math.PI * 7) / 6; // 10 o'clock, swept through the bottom
+  const startAngle = hourToAngle(arcStartHour);
+  const endAngle = hourToAngle(arcEndHour);
   ctx.clearRect(0, 0, width, height);
   ctx.save();
   ctx.beginPath();
@@ -159,6 +175,8 @@ export function ProfileEditor() {
   const [gradientEnd, setGradientEnd] = useState<string | undefined>("#006b3b");
   const [foreground, setForeground] = useState("#ffffff");
   const [fontScale, setFontScale] = useState(1);
+  const [arcStart, setArcStart] = useState(DEFAULT_ARC_START);
+  const [arcEnd, setArcEnd] = useState(DEFAULT_ARC_END);
   const [exportId, setExportId] = useState("linkedin");
   const [width, setWidth] = useState(400);
   const [height, setHeight] = useState(400);
@@ -173,8 +191,8 @@ export function ProfileEditor() {
 
   const paintPreview = useCallback(() => {
     if (!canvasRef.current || !image) return;
-    renderAvatar(canvasRef.current, image.element, transform, PREVIEW_SIZE, PREVIEW_SIZE, message, background, gradientEnd, foreground, fontScale);
-  }, [image, transform, message, background, gradientEnd, foreground, fontScale]);
+    renderAvatar(canvasRef.current, image.element, transform, PREVIEW_SIZE, PREVIEW_SIZE, message, background, gradientEnd, foreground, fontScale, arcStart, arcEnd);
+  }, [image, transform, message, background, gradientEnd, foreground, fontScale, arcStart, arcEnd]);
 
   useEffect(() => paintPreview(), [paintPreview]);
 
@@ -182,11 +200,11 @@ export function ProfileEditor() {
     if (!image) return;
     const timer = window.setTimeout(() => {
       const canvas = document.createElement("canvas");
-      renderAvatar(canvas, image.element, transform, width, height, message, background, gradientEnd, foreground, fontScale);
+      renderAvatar(canvas, image.element, transform, width, height, message, background, gradientEnd, foreground, fontScale, arcStart, arcEnd);
       canvas.toBlob((blob) => setEstimatedBytes(blob?.size ?? null), `image/${format}`, format === "jpeg" ? quality / 100 : undefined);
     }, 160);
     return () => window.clearTimeout(timer);
-  }, [image, transform, width, height, message, background, gradientEnd, foreground, fontScale, format, quality]);
+  }, [image, transform, width, height, message, background, gradientEnd, foreground, fontScale, arcStart, arcEnd, format, quality]);
 
   useEffect(() => () => {
     if (image) URL.revokeObjectURL(image.url);
@@ -269,7 +287,7 @@ export function ProfileEditor() {
   function download() {
     if (!image) return;
     const canvas = document.createElement("canvas");
-    renderAvatar(canvas, image.element, transform, width, height, message, background, gradientEnd, foreground, fontScale);
+    renderAvatar(canvas, image.element, transform, width, height, message, background, gradientEnd, foreground, fontScale, arcStart, arcEnd);
     canvas.toBlob((blob) => {
       if (!blob) return;
       const url = URL.createObjectURL(blob);
@@ -369,7 +387,14 @@ export function ProfileEditor() {
                 <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Message<input maxLength={28} value={message} onChange={(event) => { setMessage(event.target.value || " "); setOverlayId("custom"); }} className="mt-2 h-10 w-full rounded-md border border-input bg-card px-3 text-sm font-semibold uppercase text-foreground outline-none focus:ring-2 focus:ring-ring" /></label>
                 <ColorInput label="Ring" value={background} onChange={(value) => { setBackground(value); setGradientEnd(shiftHex(value, 34)); setOverlayId("custom"); }} />
                 <ColorInput label="Text" value={foreground} onChange={(value) => { setForeground(value); setOverlayId("custom"); }} />
-                <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground sm:col-span-2">Text size <span className="float-right font-mono text-foreground">{Math.round(fontScale * 100)}%</span><input aria-label="Frame text size" type="range" min="0.7" max="1.3" step="0.05" value={fontScale} onChange={(event) => setFontScale(Number(event.target.value))} className="mt-2 w-full accent-primary" /></label>
+                <SliderRow className="sm:col-span-2" label="Text size" valueLabel={`${Math.round(fontScale * 100)}%`} min={0.7} max={1.3} step={0.05} value={fontScale} defaultValue={1} onChange={setFontScale} />
+                <div className="sm:col-span-2">
+                  <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Ring position <span className="font-normal normal-case tracking-normal">(optional)</span></p>
+                  <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                    <SliderRow label="Starts at" valueLabel={hourLabel(arcStart)} min={2.5} max={4.5} step={0.25} value={arcStart} defaultValue={DEFAULT_ARC_START} onChange={setArcStart} />
+                    <SliderRow label="Ends at" valueLabel={hourLabel(arcEnd)} min={9.5} max={11.5} step={0.25} value={arcEnd} defaultValue={DEFAULT_ARC_END} onChange={setArcEnd} />
+                  </div>
+                </div>
               </div>
             </ControlSection>
 
@@ -410,6 +435,25 @@ export function ProfileEditor() {
 
 function ControlSection({ number, title, children }: { number: string; title: string; children: React.ReactNode }) {
   return <div className="border-t border-border pt-6"><div className="mb-4 flex items-center gap-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{number}</span><h3 className="font-display text-base font-bold">{title}</h3></div>{children}</div>;
+}
+
+function SliderRow({ label, valueLabel, min, max, step, value, defaultValue, onChange, className }: { label: string; valueLabel: string; min: number; max: number; step: number; value: number; defaultValue: number; onChange: (value: number) => void; className?: string }) {
+  const markerPercent = ((defaultValue - min) / (max - min)) * 100;
+  const isDefault = Math.abs(value - defaultValue) < step / 2;
+  return (
+    <div className={className}>
+      <label className="block text-xs font-bold uppercase tracking-wide text-muted-foreground">
+        {label} <span className="float-right font-mono text-foreground">{valueLabel}</span>
+        <input aria-label={label} type="range" min={min} max={max} step={step} value={value} onChange={(event) => onChange(Number(event.target.value))} className="mt-2 w-full accent-primary" />
+      </label>
+      <div className="relative mt-1 h-4">
+        <span className="absolute -translate-x-1/2 text-[10px] font-semibold uppercase tracking-wide" style={{ left: `${markerPercent}%` }}>
+          <span className={cn("block text-center", isDefault ? "text-primary" : "text-muted-foreground")}>Default</span>
+        </span>
+      </div>
+      <button type="button" onClick={() => onChange(defaultValue)} disabled={isDefault} className="mt-1 text-[11px] font-semibold text-primary hover:underline disabled:opacity-0">Reset</button>
+    </div>
+  );
 }
 
 function ColorInput({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
