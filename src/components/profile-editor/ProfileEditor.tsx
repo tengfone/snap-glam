@@ -168,6 +168,7 @@ export function ProfileEditor() {
   const dragRef = useRef<{ x: number; y: number; startX: number; startY: number } | null>(null);
   const [image, setImage] = useState<ImageState | null>(null);
   const [error, setError] = useState("");
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
   const [transform, setTransform] = useState(initialTransform);
   const [overlayId, setOverlayId] = useState("open");
   const [message, setMessage] = useState("#OpenToWork");
@@ -213,7 +214,10 @@ export function ProfileEditor() {
   function chooseFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
-    if (!file) return;
+    if (file) loadFile(file);
+  }
+
+  function loadFile(file: File) {
     if (!ACCEPTED_TYPES.includes(file.type)) {
       setError("Choose a JPG, PNG, or WebP image.");
       return;
@@ -322,7 +326,22 @@ export function ProfileEditor() {
       <div className="mx-auto max-w-[1240px] px-4 py-5 sm:px-6 sm:py-7">
         <div className="grid overflow-hidden rounded-xl border border-border bg-card shadow-workspace lg:grid-cols-[minmax(0,1fr)_480px]">
           <section className="border-b border-border bg-workspace lg:sticky lg:top-5 lg:border-b-0 lg:border-r">
-            <div className="relative flex min-h-[460px] items-center justify-center p-6 pt-24 sm:min-h-[650px] sm:p-10 sm:pt-28 lg:min-h-[calc(100vh-112px)]">
+            <div
+              className="relative flex min-h-[460px] items-center justify-center p-6 pt-24 sm:min-h-[650px] sm:p-10 sm:pt-28 lg:min-h-[calc(100vh-112px)]"
+              onDragOver={(event) => { event.preventDefault(); setIsDraggingFile(true); }}
+              onDragLeave={() => setIsDraggingFile(false)}
+              onDrop={(event) => {
+                event.preventDefault();
+                setIsDraggingFile(false);
+                const file = event.dataTransfer.files?.[0];
+                if (file) loadFile(file);
+              }}
+            >
+              {isDraggingFile && (
+                <div className="pointer-events-none absolute inset-3 z-10 grid place-items-center rounded-xl border-2 border-dashed border-primary bg-primary/10">
+                  <p className="rounded-full bg-card px-4 py-2 text-sm font-bold text-primary shadow-workspace">Drop your photo here</p>
+                </div>
+              )}
               <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-4 px-6 py-6 sm:px-10">
                 <div>
                   <h1 className="font-display text-xl font-bold sm:text-2xl">Editor preview</h1>
@@ -334,7 +353,7 @@ export function ProfileEditor() {
                 <div className="max-w-md text-center">
                   <div className="mx-auto mb-5 grid size-16 place-items-center rounded-full border border-primary/30 bg-primary/10 text-primary"><ImagePlus size={27} aria-hidden="true" /></div>
                   <h2 className="font-display text-xl font-bold">Choose a profile photo</h2>
-                  <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">JPG, PNG, or WebP up to 25 MB. The file stays in this browser tab.</p>
+                  <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">JPG, PNG, or WebP up to 25 MB — click below or drag &amp; drop it here. The file stays in this browser tab.</p>
                   <Button className="mt-6 h-11 px-5" onClick={() => inputRef.current?.click()}><ImagePlus size={17} />Choose photo</Button>
                   {error && <p role="alert" className="mt-4 text-sm font-medium text-destructive">{error}</p>}
                 </div>
