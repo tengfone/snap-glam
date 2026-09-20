@@ -77,6 +77,20 @@ function shiftHex(hex: string, amount: number) {
   return `#${[red, green, blue].map((part) => part.toString(16).padStart(2, "0")).join("")}`;
 }
 
+const DEFAULT_ARC_START = 3.5; // 3:30
+const DEFAULT_ARC_END = 10.5; // 10:30
+
+// clock hour -> canvas angle (0 rad = 3 o'clock, clockwise)
+function hourToAngle(hour: number) {
+  return ((hour - 3) * Math.PI) / 6;
+}
+
+function hourLabel(hour: number) {
+  const whole = Math.floor(hour) === 0 ? 12 : Math.floor(hour);
+  const minutes = Math.round((hour - Math.floor(hour)) * 60);
+  return `${whole}:${minutes.toString().padStart(2, "0")}`;
+}
+
 function renderAvatar(
   canvas: HTMLCanvasElement,
   image: HTMLImageElement,
