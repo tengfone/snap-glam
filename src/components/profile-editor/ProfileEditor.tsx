@@ -21,37 +21,44 @@ function drawArcText(
   startAngle: number,
   endAngle: number,
 ) {
-  const repeatCount = text.length <= 12 ? 3 : 2;
-  const repeated = Array.from({ length: repeatCount }, () => text).join("   •   ");
+  const phrase = text.trim();
   ctx.save();
   ctx.fillStyle = color;
   ctx.font = `800 ${fontSize}px Sora, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  const tracking = fontSize * 0.045;
-  const widths = Array.from(repeated, (character) => ctx.measureText(character).width + tracking);
+  const tracking = fontSize * 0.025;
+  const widths = Array.from(phrase, (character) => ctx.measureText(character).width + tracking);
   const measuredWidth = widths.reduce((total, width) => total + width, 0);
-  const availableWidth = radius * (endAngle - startAngle - 0.12);
+  const availableWidth = radius * (endAngle - startAngle - 0.42);
   const fit = Math.min(1, availableWidth / measuredWidth);
   if (fit < 1) {
     ctx.font = `800 ${fontSize * fit}px Sora, sans-serif`;
   }
   const fittedTracking = tracking * fit;
-  const fittedWidths = Array.from(repeated, (character) => ctx.measureText(character).width + fittedTracking);
+  const fittedWidths = Array.from(phrase, (character) => ctx.measureText(character).width + fittedTracking);
   const totalWidth = fittedWidths.reduce((total, width) => total + width, 0);
   let offset = -totalWidth / 2;
-  for (let i = 0; i < repeated.length; i += 1) {
+  for (let i = 0; i < phrase.length; i += 1) {
     const characterWidth = fittedWidths[i] ?? 0;
     const distance = offset + characterWidth / 2;
     const angle = Math.PI / 2 - distance / radius;
     ctx.save();
     ctx.translate(center + Math.cos(angle) * radius, center + Math.sin(angle) * radius);
     ctx.rotate(angle - Math.PI / 2);
-    ctx.fillText(repeated[i] ?? "", 0, 0);
+    ctx.fillText(phrase[i] ?? "", 0, 0);
     ctx.restore();
     offset += characterWidth;
   }
   ctx.restore();
+}
+
+function withAlpha(hex: string, alpha: number) {
+  const clean = hex.replace("#", "");
+  const expanded = clean.length === 3 ? clean.split("").map((character) => character + character).join("") : clean;
+  const value = Number.parseInt(expanded, 16);
+  if (!Number.isFinite(value)) return `rgba(0, 0, 0, ${alpha})`;
+  return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
 }
 
 function renderAvatar(
@@ -77,8 +84,8 @@ function renderAvatar(
   const photoRadius = size / 2;
   const outerRadius = size / 2;
   const innerRadius = outerRadius - ringWidth;
-  const startAngle = Math.PI * 0.17;
-  const endAngle = Math.PI * 0.83;
+  const startAngle = Math.PI * 1.22;
+  const endAngle = Math.PI * 2.28;
   ctx.clearRect(0, 0, width, height);
   ctx.save();
   ctx.beginPath();
@@ -101,16 +108,20 @@ function renderAvatar(
   ctx.arc(cx, cy, innerRadius, endAngle, startAngle, true);
   ctx.closePath();
   if (gradientEnd) {
-    const gradient = ctx.createLinearGradient(cx - outerRadius, cy, cx + outerRadius, cy);
-    gradient.addColorStop(0, background);
-    gradient.addColorStop(0.5, gradientEnd);
-    gradient.addColorStop(1, background);
+    const gradient = ctx.createConicGradient(startAngle, cx, cy);
+    const span = (endAngle - startAngle) / (Math.PI * 2);
+    gradient.addColorStop(0, withAlpha(background, 0));
+    gradient.addColorStop(span * 0.12, background);
+    gradient.addColorStop(span * 0.52, gradientEnd);
+    gradient.addColorStop(span * 0.88, gradientEnd);
+    gradient.addColorStop(span, withAlpha(gradientEnd, 0));
+    gradient.addColorStop(1, withAlpha(background, 0));
     ctx.fillStyle = gradient;
   } else {
     ctx.fillStyle = background;
   }
   ctx.fill();
-  drawArcText(ctx, message, cx, outerRadius - ringWidth / 2, ringWidth * 0.255 * fontScale, foreground, startAngle, endAngle);
+  drawArcText(ctx, message.toUpperCase(), cx, outerRadius - ringWidth / 2, ringWidth * 0.42 * fontScale, foreground, startAngle, endAngle);
   ctx.restore();
 }
 
