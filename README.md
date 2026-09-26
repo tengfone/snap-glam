@@ -1,7 +1,5 @@
 # Profile Frame Studio
 
-i want to make like a profile picture overlay for @connector:linkedin:"LinkedIn" but not for linkedin. so like example instagram, basically someone just need to upload their photo and the overlay can be things like #opentowork or something customizable (or funny). the photo SHOULDNT be stored in our servers, everything should be client side and it should make known to the user that we are not storing any data at all. we should also include some basic photo editing stuff such as cropping, rotation etc. then for the #opentowork kind it should be customizable with some standard linkedin template
-
 This project was built with [Lovable](https://lovable.dev).
 
 **Live app**: https://snap-glam.lovable.app
